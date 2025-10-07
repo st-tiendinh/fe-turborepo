@@ -1,58 +1,151 @@
-# Turborepo Tailwind CSS starter
+# E-commerce Monorepo with Turborepo
 
-This Turborepo starter is maintained by the Turborepo core team.
-
-## Using this example
-
-Run the following command:
-
-```sh
-npx create-turbo@latest -e with-tailwind
-```
+A full-stack e-commerce monorepo featuring a shop, CMS, and shared packages built with Next.js, Prisma, and Tailwind CSS.
 
 ## What's inside?
 
 This Turborepo includes the following packages/apps:
 
-### Apps and Packages
+### Apps
 
-- `docs`: a [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `web`: another [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `ui`: a stub React component library with [Tailwind CSS](https://tailwindcss.com/) shared by both `web` and `docs` applications
+- `shop`: Customer-facing e-commerce storefront (runs on port 3002)
+- `cms`: Content Management System for managing products (runs on port 3003)
+
+### Packages
+
+- `@repo/ui`: Shared React component library with [Tailwind CSS](https://tailwindcss.com/) including:
+  - `shop-components`: ProductCard component
+  - `common-components`: PageHeader, Button components
+- `@repo/sections`: Reusable layout sections:
+  - Header: Main navigation header with logo, links, and custom content
+  - Footer: Footer with sections, links, and social media
+- `@repo/database`: Shared Prisma database client and schema
 - `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/tailwind-config`: Shared Tailwind CSS configuration
 - `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-### Building packages/ui
+## Getting Started
 
-This example is set up to produce compiled styles for `ui` components into the `dist` directory. The component `.tsx` files are consumed by the Next.js apps directly using `transpilePackages` in `next.config.ts`. This was chosen for several reasons:
+### Prerequisites
 
-- Make sharing one `tailwind.config.ts` to apps and packages as easy as possible.
-- Make package compilation simple by only depending on the Next.js Compiler and `tailwindcss`.
-- Ensure Tailwind classes do not overwrite each other. The `ui` package uses a `ui-` prefix for it's classes.
-- Maintain clear package export boundaries.
+- Node.js 18+
+- npm 11+
 
-Another option is to consume `packages/ui` directly from source without building. If using this option, you will need to update the `tailwind.config.ts` in your apps to be aware of your package locations, so it can find all usages of the `tailwindcss` class names for CSS compilation.
+### Installation
 
-For example, in [tailwind.config.ts](packages/tailwind-config/tailwind.config.ts):
+1. Clone the repository
+2. Install dependencies:
 
-```js
-  content: [
-    // app content
-    `src/**/*.{js,ts,jsx,tsx}`,
-    // include packages if not transpiling
-    "../../packages/ui/*.{js,ts,jsx,tsx}",
-  ],
+```bash
+npm install
 ```
 
-If you choose this strategy, you can remove the `tailwindcss` and `autoprefixer` dependencies from the `ui` package.
+3. Set up the database:
 
-### Utilities
+```bash
+cd packages/database
+npm run db:generate
+npm run db:push
+```
 
-This Turborepo has some additional tools already setup for you:
+4. Build shared packages:
+
+```bash
+npm run build
+```
+
+### Development
+
+Run all apps in development mode:
+
+```bash
+npm run dev
+```
+
+Or run individual apps:
+
+```bash
+# Shop app (http://localhost:3002)
+cd apps/shop
+npm run dev
+
+# CMS app (http://localhost:3003)
+cd apps/cms
+npm run dev
+```
+
+### Database Management
+
+The database package uses Prisma with SQLite. Available commands:
+
+```bash
+cd packages/database
+
+# Generate Prisma client
+npm run db:generate
+
+# Push schema to database (development)
+npm run db:push
+
+# Run migrations (production)
+npm run db:migrate
+
+# Open Prisma Studio
+npm run db:studio
+```
+
+## Project Structure
+
+```
+apps/
+  ├── shop/        # Customer-facing storefront
+  └── cms/         # Content management system
+packages/
+  ├── ui/          # Shared React components
+  ├── sections/    # Layout sections (Header, Footer)
+  ├── database/    # Prisma schema and client
+  ├── eslint-config/
+  ├── tailwind-config/
+  └── typescript-config/
+```
+
+## Features
+
+### Shop App
+- Browse products with real-time inventory
+- Product cards with images, descriptions, and pricing
+- Responsive design
+
+### CMS App
+- Add, edit, and delete products
+- Manage product inventory status
+- Real-time product management interface
+
+### Shared UI Components
+- ProductCard: Display product information
+- PageHeader: Consistent page headers
+- Button: Reusable button component
+
+### Database Schema
+
+**Product Model:**
+- id (String, CUID)
+- name (String)
+- description (String)
+- price (Float)
+- imageUrl (String)
+- inStock (Boolean)
+- createdAt (DateTime)
+- updatedAt (DateTime)
+
+## Utilities
+
+This Turborepo has the following tools:
 
 - [Tailwind CSS](https://tailwindcss.com/) for styles
 - [TypeScript](https://www.typescriptlang.org/) for static type checking
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
+- [Prisma](https://www.prisma.io/) for database ORM
